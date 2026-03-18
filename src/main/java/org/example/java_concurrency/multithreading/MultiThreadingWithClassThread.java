@@ -114,6 +114,8 @@ class Thread2 extends Thread {
 
         while (count <= 10 && !Thread.currentThread().isInterrupted()) {
             try {
+                String data = "Data-" + count++;
+                resource.produceData(data);
 
                 log("working...");
                 Thread.sleep(400);
