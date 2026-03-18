@@ -1,4 +1,4 @@
-package org.example.java_concurrency.multithreading;
+package org.example.java_concurrency.multithreading.a_multithreadingwiththreadclass;
 
 import java.time.LocalTime;
 import java.util.LinkedList;
