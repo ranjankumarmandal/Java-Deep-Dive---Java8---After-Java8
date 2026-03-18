@@ -67,6 +67,38 @@ class SharedResource {
     }
 }
 
+// Consumer Thread
+class Thread1 extends Thread {
+
+    private final SharedResource resource;
+
+    Thread1(SharedResource resource, String name) {
+        super(name);
+        this.resource = resource;
+    }
+
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
+            String data = resource.consumeData();
+            if (data == null) break;
+
+            try {
+                log("processing " + data);
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log("interrupted during processing");
+                break;
+            }
+        }
+        log("exiting...");
+    }
+
+    private void log(String msg) {
+        System.out.println(getName() + " -> " + msg);
+    }
+}
+
 public class MultiThreadingWithClassThread {
 
     public static void main(String[] args) throws Exception {
