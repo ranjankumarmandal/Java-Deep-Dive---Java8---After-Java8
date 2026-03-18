@@ -1,32 +1,31 @@
 package org.example.java_concurrency.multithreading.b_multithreadingwithrunnableinterface;
 
-class OrderProcessor implements Runnable {
-    private int orderId;
+class BankAccount {
+    private int balance = 1000;
 
-    public OrderProcessor(int orderId) {
-        this.orderId = orderId;
-    }
+    public synchronized void withdraw(int amount, String user) {
+        System.out.println(user + " is trying to withdraw " + amount);
 
-    public void run() {
-        System.out.println("Processing Order: " + orderId +
-                " by " + Thread.currentThread().getName());
+        if (balance >= amount) {
+            System.out.println(user + " proceeding with withdrawal...");
 
-        try {
-            Thread.sleep(2000); // simulate processing time
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            balance -= amount;
+            System.out.println(user + " completed withdrawal. Remaining balance: " + balance);
+        } else {
+            System.out.println(user + " insufficient balance!");
         }
-
-        System.out.println("Completed Order: " + orderId);
     }
 }
 
 public class MultiThreadingWithRunnableInterface {
     public static void main(String[] args) {
 
-        for (int i = 1; i <= 5; i++) {
-            Thread t = new Thread(new OrderProcessor(i));
-            t.start();
-        }
+        BankAccount account = new BankAccount();
+
+        Thread user1 = new Thread(new WithdrawTask(account, "User-1", 700));
+        Thread user2 = new Thread(new WithdrawTask(account, "User-2", 700));
+
+        user1.start();
+        user2.start();
     }
 }
