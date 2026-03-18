@@ -95,7 +95,7 @@ public class MultiThreadingWithClassThread {
 
         t1.start();
 
-        Thread.sleep(1000); // ensures Thread1 starts waiting
+        Thread.sleep(1000); // ensures Thread1 starts waiting - sleep
 
         t2.start();
 
