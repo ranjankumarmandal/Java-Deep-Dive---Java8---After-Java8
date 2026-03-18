@@ -8,6 +8,11 @@ class BankAccount {
 
         if (balance >= amount) {
             System.out.println(user + " proceeding with withdrawal...");
+            try {
+                Thread.sleep(1000); // simulate delay
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             balance -= amount;
             System.out.println(user + " completed withdrawal. Remaining balance: " + balance);
@@ -16,6 +21,7 @@ class BankAccount {
         }
     }
 }
+
 
 public class MultiThreadingWithRunnableInterface {
     public static void main(String[] args) {
