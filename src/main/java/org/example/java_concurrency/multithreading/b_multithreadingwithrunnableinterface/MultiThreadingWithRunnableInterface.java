@@ -22,6 +22,17 @@ class BankAccount {
     }
 }
 
+// Runnable task
+class WithdrawTask implements Runnable {
+    private BankAccount account;
+    private String user;
+    private int amount;
+
+
+    public void run() {
+        account.withdraw(amount, user);
+    }
+}
 
 public class MultiThreadingWithRunnableInterface {
     public static void main(String[] args) {
