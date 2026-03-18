@@ -2,14 +2,18 @@ package org.example.java_concurrency.multithreading.b_multithreadingwithrunnable
 
 class MyTask implements Runnable {
     public void run() {
-        System.out.println("Thread is running");
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(Thread.currentThread().getName() + " - " + i);
+        }
     }
 }
 
 public class MultiThreadingWithRunnableInterface {
     public static void main(String[] args) {
-        MyTask task = new MyTask();
-        Thread t1 = new Thread(task);
-        t1.start(); // starts a new thread
+        Thread t1 = new Thread(new MyTask());
+        Thread t2 = new Thread(new MyTask());
+
+        t1.start();
+        t2.start();
     }
 }
