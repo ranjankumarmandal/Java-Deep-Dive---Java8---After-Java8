@@ -99,6 +99,35 @@ class Thread1 extends Thread {
     }
 }
 
+// Producer Thread
+class Thread2 extends Thread {
+
+    private final SharedResource resource;
+
+    Thread2(SharedResource resource, String name) {
+        super(name);
+        this.resource = resource;
+    }
+
+    public void run() {
+        int count = 1;
+
+        while (count <= 10 && !Thread.currentThread().isInterrupted()) {
+            try {
+
+                log("working...");
+                Thread.sleep(400);
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log("interrupted during production");
+                break;
+            }
+        }
+        log("finished producing");
+    }
+}
+
 public class MultiThreadingWithClassThread {
 
     public static void main(String[] args) throws Exception {
