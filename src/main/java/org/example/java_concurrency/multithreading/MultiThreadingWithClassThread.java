@@ -1,85 +1,9 @@
 package org.example.java_concurrency.multithreading;
 
-class SharedResource {
+import java.time.LocalTime;
+import java.util.LinkedList;
+import java.util.Queue;
 
-    private boolean dataReady = false;
-
-    public synchronized void waitForData() {
-        try {
-            System.out.println(Thread.currentThread().getName() + " waiting for data...");
-
-            while (!dataReady) {
-                wait();   // releases lock and waits
-            }
-
-            System.out.println(Thread.currentThread().getName() + " received notification and continues work");
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized void produceData() {
-
-        try {
-            System.out.println(Thread.currentThread().getName() + " producing data...");
-            Thread.sleep(2000); // simulate processing
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        dataReady = true;
-
-        notify(); // notify waiting thread
-        System.out.println(Thread.currentThread().getName() + " notified waiting thread");
-    }
-}
-
-class Thread1 extends Thread {
-
-    SharedResource resource;
-
-    Thread1(SharedResource resource) {
-        this.resource = resource;
-    }
-
-    public void run() {
-
-        resource.waitForData();
-
-        for (int i = 1; i <= 5; i++) {
-            try {
-                System.out.println(getName() + " processing step " + i);
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-
-class Thread2 extends Thread {
-
-    SharedResource resource;
-
-    Thread2(SharedResource resource) {
-        this.resource = resource;
-    }
-
-    public void run() {
-
-        resource.produceData();
-
-        for (int i = 1; i <= 5; i++) {
-            try {
-                System.out.println(getName() + " working step " + i);
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
 
 public class MultiThreadingWithClassThread {
 
@@ -87,20 +11,31 @@ public class MultiThreadingWithClassThread {
 
         SharedResource resource = new SharedResource();
 
-        Thread1 t1 = new Thread1(resource);
-        Thread2 t2 = new Thread2(resource);
+        // Multiple consumers & producers
+        Thread1 consumer1 = new Thread1(resource, "Consumer-1");
+        Thread1 consumer2 = new Thread1(resource, "Consumer-2");
 
-        t1.setName("Thread1");
-        t2.setName("Thread2");
+        Thread2 producer1 = new Thread2(resource, "Producer-1");
+        Thread2 producer2 = new Thread2(resource, "Producer-2");
 
-        t1.start();
+        consumer1.start();
+        consumer2.start();
 
-        Thread.sleep(1000); // ensures Thread1 starts waiting - sleep
+        Thread.sleep(1000); // ensure consumers start waiting
 
-        t2.start();
+        producer1.start();
+        producer2.start();
 
-        t1.join();
-        t2.join();
+        // Let system run for some time
+        Thread.sleep(8000);
+
+        // Graceful shutdown
+        resource.shutdown();
+
+        consumer1.join();
+        consumer2.join();
+        producer1.join();
+        producer2.join();
 
         System.out.println("Main thread finished execution");
     }
