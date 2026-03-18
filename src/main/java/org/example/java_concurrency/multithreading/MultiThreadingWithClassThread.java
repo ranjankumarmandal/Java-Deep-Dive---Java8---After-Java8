@@ -126,6 +126,10 @@ class Thread2 extends Thread {
         }
         log("finished producing");
     }
+
+    private void log(String msg) {
+        System.out.println(getName() + " -> " + msg);
+    }
 }
 
 public class MultiThreadingWithClassThread {
