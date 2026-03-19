@@ -28,6 +28,11 @@ class WithdrawTask implements Runnable {
     private String user;
     private int amount;
 
+    public WithdrawTask(BankAccount account, String user, int amount) {
+        this.account = account;
+        this.user = user;
+        this.amount = amount;
+    }
 
     public void run() {
         account.withdraw(amount, user);
