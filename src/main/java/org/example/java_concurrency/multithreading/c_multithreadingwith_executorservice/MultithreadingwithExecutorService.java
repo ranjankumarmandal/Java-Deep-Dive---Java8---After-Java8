@@ -90,7 +90,14 @@ class OrderProcessorAdvanced {
                     ExecutorService subExecutor = Executors.newFixedThreadPool(2);
                     List<Future<Void>> subResults = subExecutor.invokeAll(List.of(inventoryTask, emailTask));
 
+                    for (Future<Void> f : subResults) {
+                        f.get(2, TimeUnit.SECONDS);
+                    }
 
+                    subExecutor.shutdown();
+
+                    order.status = OrderStatus.COMPLETED;
+                    System.out.println("Order " + order.orderId + " completed");
 
                 } catch (Exception e) {
                     e.printStackTrace();
