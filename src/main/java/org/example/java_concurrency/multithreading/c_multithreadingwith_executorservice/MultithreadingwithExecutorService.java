@@ -82,7 +82,19 @@ class OrderProcessorAdvanced {
                         return null;
                     };
 
+                    Callable<Void> emailTask = () -> {
+                        sendEmail(order);
+                        return null;
+                    };
 
+                    ExecutorService subExecutor = Executors.newFixedThreadPool(2);
+                    List<Future<Void>> subResults = subExecutor.invokeAll(List.of(inventoryTask, emailTask));
+
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
 
             futures.add(future);
