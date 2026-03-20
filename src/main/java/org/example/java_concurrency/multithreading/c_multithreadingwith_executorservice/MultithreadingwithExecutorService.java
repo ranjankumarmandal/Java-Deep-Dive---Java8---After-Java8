@@ -14,6 +14,9 @@ class OrderProcessor {
 
         int orderId = 101;
 
+        tasks.add(() -> processPayment(orderId));
+        tasks.add(() -> updateInventory(orderId));
+        tasks.add(() -> sendEmail(orderId));
 
         try {
             List<Future<String>> results = executor.invokeAll(tasks);
