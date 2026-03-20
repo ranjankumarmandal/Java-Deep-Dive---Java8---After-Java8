@@ -1,7 +1,13 @@
 package org.example.java_concurrency.multithreading.c_multithreadingwith_executorservice;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MultithreadingwithExecutorService {
     public static void main(String[] args) {
-        System.out.println("Hello ExecutorService");
+        ExecutorService es = Executors.newFixedThreadPool(2);
+
+        Runnable t1 = () -> System.out.println("Thread 1");
+        Runnable t2 = () -> System.out.println("Thread 2");
     }
 }
