@@ -3,47 +3,85 @@ package org.example.java_concurrency.multithreading.c_multithreadingwith_executo
 import java.util.concurrent.*;
 import java.util.*;
 
-class OrderProcessor {
+class OrderProcessorAdvanced {
 
-    public static String processPayment(int orderId) throws InterruptedException {
-        Thread.sleep(1000); // simulate delay
-        return "Payment processed for Order " + orderId;
+    enum OrderStatus {
+        CREATED, PAYMENT_FAILED, COMPLETED
     }
 
-    public static String updateInventory(int orderId) throws InterruptedException {
+    static class Order {
+        int orderId;
+        OrderStatus status;
+
+        Order(int orderId) {
+            this.orderId = orderId;
+            this.status = OrderStatus.CREATED;
+        }
+    }
+
+    public static boolean processPayment(Order order) throws InterruptedException {
+        Thread.sleep(1000);
+        if (new Random().nextBoolean()) {
+            System.out.println("Payment success for Order " + order.orderId);
+            return true;
+        } else {
+            System.out.println("Payment failed for Order " + order.orderId);
+            return false;
+        }
+    }
+
+    public static void updateInventory(Order order) throws InterruptedException {
         Thread.sleep(800);
-        return "Inventory updated for Order " + orderId;
+        System.out.println("Inventory updated for Order " + order.orderId);
     }
 
-    public static String sendEmail(int orderId) throws InterruptedException {
+    public static void sendEmail(Order order) throws InterruptedException {
         Thread.sleep(500);
-        return "Email sent for Order " + orderId;
+        System.out.println("Email sent for Order " + order.orderId);
+    }
+
+    public static boolean retryPayment(Order order, int maxRetries) throws InterruptedException {
+        for (int i = 1; i <= maxRetries; i++) {
+            System.out.println("Retrying payment (" + i + ") for Order " + order.orderId);
+            if (processPayment(order)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
 
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        List<Order> orders = new ArrayList<>();
 
-        List<Callable<String>> tasks = new ArrayList<>();
-
-        int orderId = 101;
-
-        tasks.add(() -> processPayment(orderId));
-        tasks.add(() -> updateInventory(orderId));
-        tasks.add(() -> sendEmail(orderId));
-
-        try {
-            List<Future<String>> results = executor.invokeAll(tasks);
-
-            for (Future<String> future : results) {
-                System.out.println(future.get());
-            }
-
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-            executor.shutdown();
+        for (int i = 1; i <= 5; i++) {
+            orders.add(new Order(i));
         }
+
+        List<Future<?>> futures = new ArrayList<>();
+
+        for (Order order : orders) {
+
+            Future<?> future = executor.submit(() -> {
+                try {
+                    boolean paymentSuccess = processPayment(order);
+
+                    if (!paymentSuccess) {
+                        paymentSuccess = retryPayment(order, 2);
+                    }
+
+                    if (!paymentSuccess) {
+                        order.status = OrderStatus.PAYMENT_FAILED;
+                        System.out.println("Order " + order.orderId + " failed completely");
+                        return;
+                    }
+
+                    Callable<Void> inventoryTask = () -> {
+                        updateInventory(order);
+                        return null;
+                    };
+
+                }
     }
 }
-
