@@ -1,18 +1,32 @@
 package org.example.java_concurrency.multithreading.c_multithreadingwith_executorservice;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
+import java.util.*;
 
-public class MultithreadingwithExecutorService {
+class OrderProcessor {
+
+
     public static void main(String[] args) {
-        ExecutorService es = Executors.newFixedThreadPool(2);
 
-        Runnable t1 = () -> System.out.println("Thread 1");
-        Runnable t2 = () -> System.out.println("Thread 2");
+        ExecutorService executor = Executors.newFixedThreadPool(3);
 
-        es.submit(t1);
-        es.submit(t2);
+        List<Callable<String>> tasks = new ArrayList<>();
 
-        es.shutdown();
+        int orderId = 101;
+
+
+        try {
+            List<Future<String>> results = executor.invokeAll(tasks);
+
+            for (Future<String> future : results) {
+                System.out.println(future.get());
+            }
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+        }
     }
 }
+
