@@ -6,6 +6,11 @@ import java.util.*;
 class OrderProcessor {
 
 
+    public static String sendEmail(int orderId) throws InterruptedException {
+        Thread.sleep(500);
+        return "Email sent for Order " + orderId;
+    }
+
     public static void main(String[] args) {
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
