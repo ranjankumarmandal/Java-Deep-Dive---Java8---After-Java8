@@ -5,6 +5,11 @@ import java.util.*;
 
 class OrderProcessor {
 
+    public static String processPayment(int orderId) throws InterruptedException {
+        Thread.sleep(1000); // simulate delay
+        return "Payment processed for Order " + orderId;
+    }
+
     public static String updateInventory(int orderId) throws InterruptedException {
         Thread.sleep(800);
         return "Inventory updated for Order " + orderId;
