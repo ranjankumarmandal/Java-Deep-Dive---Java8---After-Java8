@@ -82,6 +82,25 @@ class OrderProcessorAdvanced {
                         return null;
                     };
 
-                }
+
+            });
+
+            futures.add(future);
+        }
+
+        for (Future<?> f : futures) {
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        executor.shutdown();
+
+        System.out.println("\nFINAL ORDER STATUS:");
+        for (Order order : orders) {
+            System.out.println("Order " + order.orderId + " -> " + order.status);
+        }
     }
 }
